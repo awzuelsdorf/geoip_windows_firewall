@@ -6,6 +6,10 @@ This repo allows one to create a SQLite database and CSV file of IP address rang
 
 Thanks to [Jason Fossen](https://www.sans.org/profiles/jason-fossen/) for developing the Import-FirewallBlocklist.ps1 script. 
 
+##Usage##
+
+Please refer to the [blog post](https://awzuelsdorf.github.io/geoip-blocking-using-windows-firewall-and-regional-internet-registries-8-Oct-2021.html) for this repository, starting with "Getting the Data".
+
 ##Caveats##
 - Requires Python 3
 - All python scripts have dependencies on the modules specified in requirements.txt. Please install these modules prior to running any python script included in this project using `pip install -r requirements.txt`
