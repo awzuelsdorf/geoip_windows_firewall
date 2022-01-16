@@ -1,6 +1,4 @@
-#Liberty Prime#
-
-Please rename this to something more professional. Though communism is a temporary setback on the road to freedom, so is being unprofessional.
+#GeoIP Windows Firewall#
 
 This repo allows one to create a SQLite database and CSV file of IP address ranges for countries in APNIC and use that database to identify a minimal set of IP CIDRs that can be used to block connections from certain countries that do not need inbound or outbound access to or from the user's Windows PC. It also enables one to update or create firewall rules to block connections from the given countries.
 
