@@ -11,6 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import sys
 import argparse
 import pandas as pd
 import sqlite3
@@ -27,13 +28,16 @@ def save_records(records, columns, sqlite_file_path, csv_file_path):
     df_dict = {column: list() for column in columns}
 
     for record_i in records:
-        # Check for unrecognized column names. Raise errors if there are some.
+        # Check for unrecognized column names. Print warning and skip unrecognized columns if there are some.
         unrecognized_columns = set(record_i.keys()).difference(columns)
 
         if unrecognized_columns:
-            raise ValueError(f"Unrecognized column(s) found: {', '.join(unrecognized_columns)}")
+            sys.stderr.write(f"WARNING: Unrecognized column(s) found in record {record_i}: {', '.join(unrecognized_columns)}\nThese columns will be discarded from this record.\n")
 
         for column in columns:
+            if column in unrecognized_columns:
+                continue
+
             column_value = record_i.get(column)
 
             if column_value is None:
@@ -47,12 +51,12 @@ def save_records(records, columns, sqlite_file_path, csv_file_path):
 
     if database is not None:
         with sqlite3.connect(database) as conn:
-            df.to_sql("Data", con=conn, if_exists='append')
+            df.to_sql("Data", con=conn, if_exists='append', index=False)
 
     csv_file = csv_file_path
 
     if csv_file is not None:
-        df.to_csv(csv_file, mode='a')
+        df.to_csv(csv_file, mode='a', index=False)
 
 def main():
     start_time = time.time()
@@ -62,7 +66,7 @@ def main():
     parser.add_argument("-i", "--db-inetnum-file-path", dest="db_inetnum_file_path", required=True, type=argparse.FileType(mode='r', encoding='utf-8', errors='ignore'), help="Path to <zone>.db.inetnum file. Example: C:\\Users\\Admin\\Documents\\apnic.db.inetnum")
     parser.add_argument("-c", "--output-csv-file-path", dest="csv_file_path", default=None, required=False, help="Path to output CSV file. Example: C:\\Users\\Admin\\Documents\\apnic.csv")
     parser.add_argument("-s", "--output-sqlite-file-path", dest="sqlite_file_path", default=None, required=False, help="Path to output SQLite file. Example: C:\\Users\\Admin\\Documents\\apnic.sqlite")
-    parser.add_argument("--columns", dest="columns", default=None, required=False, help=f"Names of columns to include in output, separated by commas. If not provided, will include default columns {', '.join(DEFAULT_COLUMNS)}", choices=DEFAULT_COLUMNS)
+    parser.add_argument("--columns", dest="columns", default=None, required=False, type=str, help=f"Names of columns to include in output, separated by commas. If not provided, will include default columns {', '.join(DEFAULT_COLUMNS)}")
     parser.add_argument("--batch-size", dest="batch_size", default=DEFAULT_BATCH_SIZE, type=int, required=False, help="Number of records to write to SQLite db and/or CSV file in one batch.")
 
     args = parser.parse_args()

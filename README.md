@@ -6,20 +6,18 @@ This repo allows one to create a SQLite database and CSV file of IP address rang
 
 Thanks to [Jason Fossen](https://www.sans.org/profiles/jason-fossen/) for developing the Import-FirewallBlocklist.ps1 script. 
 
-##Usage##
+##Generating the Firewall CIDRs##
 
-Please refer to the [blog post](https://awzuelsdorf.github.io/geoip-blocking-using-windows-firewall-and-regional-internet-registries-8-Oct-2021.html) for this repository, starting with "Getting the Data".
+You can run `./create_ip_cidrs.sh` on a system that has `curl`, `which`, `python`, and `virtualenv` available to generate the `consolidated_china_iran_russian_hong_kong_north_korea.txt` file that you can use as input for `Import-FirewallBlocklist.ps1`. If you are using Git for Windows and a version of python that is at least 3.6.8, you should already have what you need. This shell script will also generate the two CSVs that are needed to generate the list of consolidated IP CIDRs.
 
-##Caveats##
-- Requires Python 3
-- All python scripts have dependencies on the modules specified in requirements.txt. Please install these modules prior to running any python script included in this project using `pip install -r requirements.txt`
-- While generating the SQLite database and CSV file can be done on any platform that supports Python 3 and the requirements in requirements.txt, the `Import-FirewallBlocklist.ps1` script requires Powershell version 3 to be installed.
+Once you have generated `consolidated_china_iran_russian_hong_kong_north_korea.txt`, please refer to the 'Apply Firewall Rules' section to apply the firewall rules.
 
 ##Apply Firewall Rules##
+- The `Import-FirewallBlocklist.ps1` script requires Powershell version 3 to be installed.
 - In a Powershell shell with administrator privileges:
   - Make note of your current user's execution policies using `Get-ExecutionPolicy -Scope CurrentUser`
   - Run `Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser`
-  - Run `.\Import-FirewallBlocklist.ps1 -inputfile .\ChinaConsolidated.txt`
+  - Run `.\Import-FirewallBlocklist.ps1 -inputfile .\consolidated_china_iran_russian_hong_kong_north_korea.txt`
 
 None of these commands should have errors. If they do, please resolve them and re-run the commands before continuing.
 
